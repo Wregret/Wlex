@@ -9,11 +9,11 @@ Token makeToken(string, int, int);
 
 int main()
 {
-	string name;
-	char c;
+	string name;//buffer
+	char c;//character being readed
 	int innerCode = 0;
-	int state = 0;
-	int s;
+	int state = 0;//state number
+	int s;//temporary state number
 
 	ifstream input;
 	input.open("source.txt");
@@ -21,10 +21,11 @@ int main()
 	{
 		while (true)
 		{
-			input >> c;
-			int s = lookup(c, state);
+			input >> c;//read next character
+			int s = lookup(c, state);//look up the transitive table
 			if (s != -1)
 			{
+				//change state, add this character into name buffer
 				state = s;
 				name.push_back(c);
 			}
@@ -32,6 +33,7 @@ int main()
 			{
 				if (isNotEndState(s))
 				{
+					//lexical analyzer crashed, print error information 
 					cerr << "Transitive Error!" << endl;
 					break;
 				}
@@ -39,11 +41,13 @@ int main()
 				{
 					if (input.eof())
 					{
+						//input file is end, make the last Token
 						makeToken(name, state, innerCode).print();
 						break;
 					}
 					else
 					{
+						//unget the readed character, using name buffer make token, restore the program
 						input.unget();
 						makeToken(name, state, innerCode).print();
 						name.clear();
@@ -76,7 +80,7 @@ int lookup(char c, int state)
 			if (c == '(')return 12;
 			if (c == ')')return 13;
 			if (c == ';')return 14;
-			if (c = '%')return 15;
+			if (c == '%')return 15;
 			else return -1;
 			break;
 		case 1:
@@ -173,6 +177,9 @@ Token makeToken(string name, int state, int innerCode)
 		break;
 	case 15:
 		type = MOD;
+		break;
+	default:
+		cerr << "illegal character!" << endl;
 		break;
 	}
 	return Token(name, type, innerCode);
