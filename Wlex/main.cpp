@@ -14,10 +14,13 @@ int main()
 	int innerCode = 0;
 	int state = 0;//state number
 	int s;//temporary state number
+	Token token;
 
 	ifstream input;
-	input.open("source.txt");
-	if (input.is_open())
+	ofstream output;
+	input.open("input.txt");
+	output.open("output.txt");
+	if (input.is_open()&&output.is_open())
 	{
 		while (true)
 		{
@@ -50,6 +53,7 @@ int main()
 						//unget the readed character, using name buffer make token, restore the program
 						input.unget();
 						makeToken(name, state, innerCode).print();
+						makeToken(name, state, innerCode).write(output);
 						name.clear();
 						state = 0;
 						innerCode++;
@@ -58,6 +62,7 @@ int main()
 			}
 		}
 		input.close();
+		output.close();
 	}
 	else
 		cerr << "File not open!" << endl;
